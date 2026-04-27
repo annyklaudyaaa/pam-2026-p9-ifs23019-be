@@ -3,14 +3,19 @@ import re
 
 def parse_llm_response(result):
     try:
-        content = result.get("response") or result
+        content = result
 
-        # 🔥 hapus ```json ... ```
-        content = re.sub(r"```json\n|\n```", "", content)
+        # Cari blok JSON di dalam teks (menggunakan regex agar lebih aman)
+        match = re.search(r'\{.*\}', content, re.DOTALL)
+        if not match:
+            raise Exception("Tidak ada JSON ditemukan dalam response")
 
-        parsed = json.loads(content)
+        parsed = json.loads(match.group())
 
-        return parsed.get("motivations", [])
+        # Cek key 'desserts' (untuk tema baru) atau fallback ke 'motivations' (untuk tema lama)
+        # Jika keduanya tidak ada, return list kosong agar tidak crash
+        return parsed.get("desserts") or parsed.get("motivations") or []
 
     except Exception as e:
+        # Jika gagal parsing, kita lempar exception agar service bisa melakukan rollback
         raise Exception(f"Invalid JSON from LLM: {str(e)}")
