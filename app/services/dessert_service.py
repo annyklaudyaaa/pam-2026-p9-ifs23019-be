@@ -6,42 +6,41 @@ from app.utils.parser import parse_llm_response
 
 def create_desserts(theme: str, total: int):
     session = SessionLocal()
-
     try:
-        # Prompt fokus ke hidangan penutup (Dessert)
+        # Prompt diubah agar LLM kasih Nama dan Deskripsi terpisah
         prompt = f"""
-        Dalam format JSON, buat {total} rekomendasi dessert (makanan penutup) manis dengan keyword "{theme}".
-        Setiap rekomendasi berisi nama dessert beserta deskripsi singkatnya dalam satu kalimat.
-        Format:
+        Buatlah {total} ide dessert manis dengan tema "{theme}".
+        Respon harus dalam format JSON:
         {{
             "desserts": [
-                {{"name": "Nama Dessert: deskripsi singkat dessert tersebut"}}
+                {{"name": "Nama Dessert", "description": "Deskripsi singkat satu kalimat"}}
             ]
         }}
-        Pastikan hanya kembalikan JSON saja, tanpa teks tambahan apapun.
+        Hanya kembalikan JSON.
         """
 
         result = generate_from_llm(prompt)
-        # Parser akan mencari key 'desserts' sesuai prompt di atas
         dessert_list = parse_llm_response(result)
 
-        # Simpan log permintaan ke tabel requests
+        # Simpan log permintaan
         req_log = RequestLog(theme=theme)
         session.add(req_log)
         session.commit()
+        session.refresh(req_log)
 
         saved = []
-
         for item in dessert_list:
-            # Mengambil 'name' sesuai dengan model Dessert yang kita buat sebelumnya
+            # Ambil name dan description secara terpisah
             name_text = item.get("name")
+            desc_text = item.get("description", "") # Ambil deskripsi dari AI
 
             d = Dessert(
                 name=name_text,
+                description=desc_text, # Simpan ke kolom description
                 request_id=req_log.id
             )
             session.add(d)
-            saved.append(name_text)
+            saved.append({"name": name_text, "description": desc_text})
 
         session.commit()
         return saved
@@ -49,16 +48,12 @@ def create_desserts(theme: str, total: int):
     except Exception as e:
         session.rollback()
         raise e
-
     finally:
         session.close()
 
-
 def get_all_desserts(page: int = 1, per_page: int = 10):
     session = SessionLocal()
-
     try:
-        # Mengambil data dari tabel desserts
         query = session.query(Dessert)
         total = query.count()
 
@@ -70,11 +65,12 @@ def get_all_desserts(page: int = 1, per_page: int = 10):
             .all()
         )
 
-        # Mapping ke format JSON untuk Flutter (menggunakan key 'name')
+        # Mapping lengkap dengan description agar Flutter tidak error
         result = [
             {
                 "id": d.id,
                 "name": d.name,
+                "description": d.description, # Kirim deskripsi ke Flutter
                 "created_at": d.created_at.isoformat()
             }
             for d in data
@@ -84,9 +80,8 @@ def get_all_desserts(page: int = 1, per_page: int = 10):
             "page": page,
             "per_page": per_page,
             "total": total,
-            "total_pages": (total + per_page - 1) // per_page,
+            "total_pages": (total + per_page - 1) // per_page if total > 0 else 0,
             "data": result
         }
-
     finally:
         session.close()
