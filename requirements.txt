@@ -3,4 +3,3 @@ sqlalchemy
 python-dotenv
 requests
 flask-cors
-gunicorn
