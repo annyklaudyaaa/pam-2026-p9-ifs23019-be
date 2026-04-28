@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c1e0d3b-75b0-4e2d-ad34-f6c6e80500b0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/pam-2026-p9-ifs23019-be.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pam-2026-p9-ifs23019-be.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/dessert.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/dessert.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/dessert_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/dessert_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/dessert_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/dessert_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/llm_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/llm_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/parser.py" afterDir="false" />
-    </list>
+    <list default="true" id="6c1e0d3b-75b0-4e2d-ad34-f6c6e80500b0" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -68,7 +59,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1777339364041</updated>
-      <workItem from="1777339368309" duration="647000" />
+      <workItem from="1777339368309" duration="949000" />
     </task>
     <servers />
   </component>
