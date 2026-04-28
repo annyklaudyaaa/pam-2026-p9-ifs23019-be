@@ -4,12 +4,12 @@ from app.services.dessert_service import (
     get_all_desserts
 )
 
-# Ganti nama blueprint menjadi dessert
+# Mengganti nama blueprint menjadi dessert
 dessert_bp = Blueprint("dessert", __name__)
 
 @dessert_bp.route("/", methods=["GET"])
 def index():
-    # Menyesuaikan identitas pembuat
+    # Menyesuaikan dengan identitasmu
     return "API SweetAI telah berjalan! Dibuat oleh Anny Klaudya Hutabarat"
 
 @dessert_bp.route("/desserts/generate", methods=["POST"])
@@ -22,7 +22,7 @@ def generate():
         return jsonify({"error": "Bahan atau tema dessert wajib diisi"}), 400
 
     if not total:
-        return jsonify({"error": "Jumlah total wajib diisi"}), 400
+        return jsonify({"error": "Jumlah total ide wajib diisi"}), 400
 
     if total <= 0:
         return jsonify({"error": "Total harus lebih besar dari 0"}), 400
@@ -31,7 +31,7 @@ def generate():
         return jsonify({"error": "Maksimal pembuatan adalah 10 ide"}), 400
 
     try:
-        # Memanggil service create_desserts
+        # Memanggil service dessert_service yang baru
         result = create_desserts(theme, total)
 
         return jsonify({
@@ -49,10 +49,9 @@ def generate():
 @dessert_bp.route("/desserts", methods=["GET"])
 def get_all():
     page = request.args.get("page", default=1, type=int)
-    # Default per_page disesuaikan ke 10 agar pas dengan UI Flutter
+    # Default per_page disesuaikan menjadi 10 agar pas dengan UI Flutter
     per_page = request.args.get("per_page", default=10, type=int)
 
-    # Memanggil service get_all_desserts
     data = get_all_desserts(page=page, per_page=per_page)
 
     return jsonify(data)

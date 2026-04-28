@@ -1,5 +1,5 @@
 from app.extensions import SessionLocal
-from app.models.dessert import Dessert  # Pastikan import model Dessert yang baru
+from app.models.dessert import Dessert  # Pastikan mengimpor model Dessert
 from app.models.request_log import RequestLog
 from app.services.llm_service import generate_from_llm
 from app.utils.parser import parse_llm_response
@@ -8,24 +8,24 @@ def create_desserts(theme: str, total: int):
     session = SessionLocal()
 
     try:
-        # Prompt disesuaikan untuk Dessert
+        # Prompt fokus ke hidangan penutup (Dessert)
         prompt = f"""
         Dalam format JSON, buat {total} rekomendasi dessert (makanan penutup) manis dengan keyword "{theme}".
         Setiap rekomendasi berisi nama dessert beserta deskripsi singkatnya dalam satu kalimat.
         Format:
         {{
             "desserts": [
-                {{"name": "Nama Dessert: deskripsi singkat rasa dan tampilannya"}}
+                {{"name": "Nama Dessert: deskripsi singkat dessert tersebut"}}
             ]
         }}
         Pastikan hanya kembalikan JSON saja, tanpa teks tambahan apapun.
         """
 
         result = generate_from_llm(prompt)
-        # Ambil data dari parser (pastikan parser mencari key "desserts" atau "motivations")
+        # Parser akan mencari key 'desserts' sesuai prompt di atas
         dessert_list = parse_llm_response(result)
 
-        # Simpan log permintaan
+        # Simpan log permintaan ke tabel requests
         req_log = RequestLog(theme=theme)
         session.add(req_log)
         session.commit()
@@ -33,8 +33,8 @@ def create_desserts(theme: str, total: int):
         saved = []
 
         for item in dessert_list:
-            # Gunakan 'name' agar sinkron dengan model Dessert
-            name_text = item.get("name") or item.get("text") # Fallback jika parser masih pakai 'text'
+            # Mengambil 'name' sesuai dengan model Dessert yang kita buat sebelumnya
+            name_text = item.get("name")
 
             d = Dessert(
                 name=name_text,
@@ -58,6 +58,7 @@ def get_all_desserts(page: int = 1, per_page: int = 10):
     session = SessionLocal()
 
     try:
+        # Mengambil data dari tabel desserts
         query = session.query(Dessert)
         total = query.count()
 
@@ -69,7 +70,7 @@ def get_all_desserts(page: int = 1, per_page: int = 10):
             .all()
         )
 
-        # Mapping data untuk dikirim ke Flutter
+        # Mapping ke format JSON untuk Flutter (menggunakan key 'name')
         result = [
             {
                 "id": d.id,
